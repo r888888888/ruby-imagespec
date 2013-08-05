@@ -4,8 +4,6 @@ class ImageSpec
     class JPEG
 
       CONTENT_TYPE = 'image/jpeg'
-      TYPE_JFIF    = Regexp.new '^\xff\xd8\xff\xe0\x00\x10JFIF', nil, 'n'
-      TYPE_EXIF    = Regexp.new '^\xff\xd8\xff\xe1(.*){2}Exif', nil, 'n'
 
       def self.attributes(stream)
         width, height = dimensions(stream)
@@ -14,10 +12,7 @@ class ImageSpec
 
       def self.detected?(stream)
         stream.rewind
-        case stream.read(10)
-        when TYPE_JFIF, TYPE_EXIF then true
-        else false
-        end
+        stream.read(2) == "\xff\xd8"
       end
 
       def self.dimensions(stream)
